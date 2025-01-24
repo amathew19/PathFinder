@@ -1,5 +1,8 @@
 package com.campuspathfinder.pathfinder_app.models;
+import com.campuspathfinder.pathfinder_app.models.Node;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -26,24 +29,22 @@ public class Building implements Comparable<Building> {
 	@Column(nullable=false)
 	private String name;
 	
-	@Column(name = "x_coord")
-	private int x_coord;
+	@Column(nullable=false)
+	private String type;
 	
-	@Column(name = "y_coord")
-	private int y_coord;
+	@Column(nullable=false)
+	private List<Node> accessPoints;
 	
 	public Building() {
 		this.name = "";
 		this.id = 0;
-		this.x_coord = 0;
-		this.y_coord = 0;
+		this.accessPoints = new ArrayList<>();
 	}
 	
-	public Building(String name, int id, int x_coord, int y_coord) {
+	public Building(String name, int id, double latitude, double longitude, List<Node> accessPoints) {
 		this.name = name;
 		this.id = id;
-		this.x_coord = x_coord;
-		this.y_coord = y_coord;
+		this.accessPoints = accessPoints;
 	}
 	
 	public String getBldgName() {
@@ -54,12 +55,8 @@ public class Building implements Comparable<Building> {
 		return this.id;
 	}
 	
-	public int getBldgXCoord() {
-		return this.x_coord;
-	}
-	
-	public int getBldgYCoord() {
-		return this.y_coord;
+	public List<Node> getAccessPoints() {
+		return this.accessPoints;
 	}
 	
 	public int hashCode() {

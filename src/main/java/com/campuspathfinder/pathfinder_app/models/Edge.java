@@ -11,14 +11,14 @@ import java.util.Objects;
 
 public class Edge<NT extends Comparable<NT>, ET extends Comparable<ET>> implements Comparable<Edge<NT, ET>>{
 
-	private final Node<NT> sourceNode;
-	private final Node<NT> targetNode; 
+	private final Node sourceNode;
+	private final Node targetNode; 
 	private final ET edgeLabel;
 	
 	
 	public Edge() {
-		sourceNode = new Node<NT>();
-		targetNode = new Node<NT>();
+		sourceNode = new Node();
+		targetNode = new Node();
 		edgeLabel = null;
 	}
 	

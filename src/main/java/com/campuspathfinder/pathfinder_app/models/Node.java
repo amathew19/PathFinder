@@ -1,5 +1,15 @@
 package com.campuspathfinder.pathfinder_app.models;
 
+import java.util.Map;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 /**
  * <b>Node</b> represents a node in a graph.
  * Each node has a unique identifier represented by a String.
@@ -7,23 +17,51 @@ package com.campuspathfinder.pathfinder_app.models;
  * (It is a part of the GraphADT)
  */
 
-public class Node<T> {
-	public final T nodeData;
+@Entity
+@Table(name="nodes")
+public class Node {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	
+	@Column(nullable=false)
+	private String nodeId;
+	
+	@Column(nullable=false)
+	private String name;
+	
+	@Column(nullable=false)
+	private double latitude;
+	
+	@Column(nullable=false)
+	private double longitude;
+	
+	@Column(nullable=false)
+	private boolean accessible;
+	
+	@Column(nullable=false)
+	private Map<Node, Double> neighbors;
+	
+	@Column(nullable=false)
+	private Building parentBuilding;
 	
 	public Node() {
-		nodeData = null;
+		id = (long) 0;
+		name = "";
+		
 	}
 	
-	public Node(Node<T> n) {
+	public Node(Node n) {
 		this.nodeData = n.nodeData;
 	}
 	
-	public Node(T nodeData) {
+	public Node( nodeData) {
 		this.nodeData = nodeData;
 	}
 	
 	public String toString() {
-		return nodeData.toString();
+		return name + latitude;
 	}
 	
 	@Override

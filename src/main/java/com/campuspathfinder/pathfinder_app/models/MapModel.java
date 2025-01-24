@@ -4,25 +4,55 @@ import java.util.*;
 
 import com.campuspathfinder.pathfinder_app.util.MapParser;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.Data;
 
 import java.io.*;
 
+@Entity
+@Table(name="maps")
+@Data
 public class MapModel {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
-	private String universtiy;
+	@Column(nullable=false)
+	private String university;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "map_id")
+    private Set<Building> buildings = new HashSet<>();
+	
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "map_id")
+    private Set<BuildingEdge> edges = new HashSet<>();
+	
+	@Transient
 	private Graph<Building, Double> model = new Graph<>();
+	
+	@Transient
 	private Map<Building, Set<Integer>> pathways = new HashMap<Building, Set<Integer>>();
+	
+	@Transient
 	private Map<Integer, Building> buildingsById = new HashMap<Integer, Building>();
+	
+	@Transient
 	private Map<String, Building> buildingsByName = new HashMap<String, Building>();
 	
 	public MapModel() {
-		universtiy = "";
+		university = "";
 		this.model = new Graph<>();
 		this.pathways = new HashMap<>();
 		this.buildingsById = new HashMap<>();
@@ -64,7 +94,7 @@ public class MapModel {
 	
 	public MapModel(String bldgFile, String edgesFile) {
 		this.model = new Graph<>();
-		this.universtiy = "";
+		this.university = "";
 		this.pathways = new HashMap<>();
 		this.buildingsById = new HashMap<>();
 		this.buildingsByName = new HashMap<>();
@@ -123,7 +153,7 @@ public class MapModel {
 //	}
 	
 	public String getUniversityName() {
-		return universtiy;
+		return university;
 	}
 	
 	public Building getBuildingByID(int id) {
@@ -190,6 +220,19 @@ public class MapModel {
 //		System.out.println(newMap.findRoute(b1, b2));
 //	}
 	
+	private void populateEdges() {
+        for (Building b1 : pathways.keySet()) {
+            Set<Integer> connectedIds = pathways.get(b1);
+            for (Integer id : connectedIds) {
+                Building b2 = buildingsById.get(id);
+                int dx = Math.abs(b1.getBldgXCoord() - b2.getBldgXCoord());
+                int dy = Math.abs(b1.getBldgYCoord() - b2.getBldgYCoord());
+                double weight = Math.sqrt(dx * dx + dy * dy);
+                edges.add(new BuildingEdge(b1, b2, weight));
+                model.addEdge(b1, b2, weight);
+            }
+        }
+    }
 	
 }
 
